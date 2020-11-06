@@ -3,4 +3,18 @@ class UsersController < ApplicationController
     @users = User.all
     render json: @users
   end
+
+  def create
+    # インスタンスを model から作成する
+    @user = User.new(
+      name: params[:name],
+      account: params[:account],
+      email: params[:email],
+    )
+
+    # インスタンスを DB に保存する
+    @user.save!
+    # json として値を返す
+    render :show
+  end
 end
