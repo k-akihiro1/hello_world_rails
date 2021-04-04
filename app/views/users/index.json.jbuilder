@@ -1,3 +1,3 @@
 # binding.pry
 
-json.arry! @users, :account, :name, :email
+json.array! @users, :account, :name, :email
