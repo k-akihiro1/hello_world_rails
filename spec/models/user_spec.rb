@@ -27,10 +27,13 @@ RSpec.describe User, type: :model do
   # end
 
   context "まだ同じ名前の account が存在するとき" do
+    before{create(:user,account: "foo")}
+
     it "ユーザー作成に失敗する" do
-      FactoryBot.create(:user,account: "foo")
-      # User.create(name: "foo", account: "foo", email: "foo@example.com")
       user = FactoryBot.build(:user,account: "foo")
+      # User.create(name: "foo", account: "foo", email: "foo@example.com")
+      # FactoryBot.create(:user,account: "foo")
+
       # user = User.new(name: "bar", account: "foo", email: "bar@example.com")
 
       expect(user).to be_invalid
