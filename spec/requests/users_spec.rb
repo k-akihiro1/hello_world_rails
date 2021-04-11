@@ -3,24 +3,48 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
   describe "GET /users" do
     subject{get(users_path)}
-    before{ create_list(:user, 3) }
+    before{ create_list(:user, user_count) }
+    let(:user_count){3}
 
-    fit "ユーザーの一覧が取得できる" do
+    it "ユーザーの一覧が取得できる" do
       # get users_path
       subject
       res = JSON.parse(response.body)
-      binding.pry
       expect(res.length).to eq 3
       expect(res[0].keys).to eq  ["account", "name" , "email"]
-
       # 下の２つは同じ内容
-      expect(response).to eq have_http_status(200)
+      expect(response).to have_http_status(200)
       # expect(response.status).to eq 200
     end
   end
 
   describe "GET /users/:id" do
-    it "任意のユーザーのレコードが取得できる" do
+    subject {get(user_path(user_id))}
+
+    context "指定したidのユーザーが存在するとき" do
+      let(:user_id){user.id}
+      let(:user){create(:user)}
+      # let(user_id) do
+      #   存在するidって何？
+      #   user = cerate(:user)
+      #   user.id
+      # end
+
+      it "そのユーザーのレコードが取得できる" do
+        subject
+        res = JSON.parse(response.body)
+        expect(res["account"]).to eq user.account
+        expect(res["name"]).to eq user.name
+        expect(res["email"]).to eq user.email
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "指定したidが存在しないとき" do
+      let(:user_id){ 100000 }
+      fit "ユーザーが見つからない" do
+        expect{subject}.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
