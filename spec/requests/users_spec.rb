@@ -42,14 +42,32 @@ RSpec.describe "Users", type: :request do
 
     context "指定したidが存在しないとき" do
       let(:user_id){ 100000 }
-      fit "ユーザーが見つからない" do
+      it "ユーザーが見つからない" do
         expect{subject}.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
 
   describe "POST /users" do
-    it "ユーザーのレコードを作成できる" do
+    subject {post(users_path, params: params)}
+
+    context "適切なパラメーターを送信したとき" do
+      let(:params) { { user: attributes_for(:user) } }
+      it "ユーザーのレコードを作成できる" do
+        expect {subject}.to change { User.count }.by (1)
+        res = JSON.parse(response.body)
+        expect(res["name"]).to eq params[:user][:name]
+        expect(res["email"]).to eq params[:user][:email]
+        expect(res["account"]).to eq params[:user][:account]
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "不適切なパラメータを送信したとき" do
+      let(:params) {attributes_for(:user)}
+      fit "ユーザーのレコードの作成に失敗する(エラーする)" do
+        expect{subject}.to raise_error (ActionController::ParameterMissing)
+      end
     end
   end
 
