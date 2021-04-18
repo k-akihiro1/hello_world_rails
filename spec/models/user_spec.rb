@@ -2,8 +2,9 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   context "account を指定しているとき" do
-    it "ユーザーが作られる" do
-      user = FactoryBot.build(:user)
+    fit "ユーザーが作られる" do
+      binding.pry
+      user = build(:user)
       # user = User.new(name: "foo", account: "foo", email: "foo@example.com")
       # expect(user.valid?).to eq true
       expect(user).to be_valid
@@ -12,7 +13,7 @@ RSpec.describe User, type: :model do
 
   context "account を指定していないとき" do
     it "ユーザー作成に失敗する" do
-      user = FactoryBot.build(:user,account: nil)
+      user = build(:user,account: nil)
       # user = User.new(name: "foo",email: "foo@example.com")
       expect(user).to be_invalid
       expect(user.errors.details[:account][0][:error]).to eq :blank
